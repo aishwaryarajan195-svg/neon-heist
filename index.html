@@ -1,0 +1,548 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Neon Heist | Cyber Puzzle</title>
+<style>
+:root {
+  --bg: #080b16;
+  --panel: #11172a;
+  --purple: #a855f7;
+  --blue: #38bdf8;
+  --pink: #f472b6;
+  --text: #f4f4ff;
+  --muted: #9ba8c7;
+}
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  background:
+    radial-gradient(ellipse at top, #20204c 0%, transparent 55%),
+    var(--bg);
+  color: var(--text);
+  font-family: Inter, system-ui, Arial, sans-serif;
+  min-height: 100vh;
+}
+button { font: inherit; cursor: pointer; }
+header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 22px 6%;
+  border-bottom: 1px solid #222a44;
+}
+.logo {
+  font-size: 22px;
+  font-weight: 900;
+  letter-spacing: 2px;
+}
+.logo span { color: var(--pink); }
+.pill {
+  border: 1px solid #42466d;
+  color: #c7d2fe;
+  border-radius: 30px;
+  padding: 8px 13px;
+  font-size: 12px;
+}
+main {
+  max-width: 1050px;
+  margin: 40px auto;
+  padding: 0 20px;
+}
+.hero { text-align: center; margin-bottom: 28px; }
+.eyebrow {
+  color: var(--blue);
+  letter-spacing: 4px;
+  font-size: 12px;
+  font-weight: bold;
+}
+h1 {
+  font-size: clamp(38px, 7vw, 64px);
+  margin: 12px 0;
+  line-height: 1.05;
+}
+h1 span {
+  background: linear-gradient(90deg, var(--pink), var(--purple), var(--blue));
+  color: transparent;
+  background-clip: text;
+}
+.subtitle { color: var(--muted); }
+.stats {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+  margin-bottom: 18px;
+}
+.stat, .panel {
+  background: rgba(17,23,42,.92);
+  border: 1px solid #293453;
+  border-radius: 18px;
+}
+.stat { padding: 17px; text-align: center; }
+.stat strong { display: block; font-size: 25px; }
+.stat span { color: var(--muted); font-size: 12px; }
+.layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1.5fr) minmax(220px, .8fr);
+  gap: 18px;
+}
+.panel { padding: 24px; }
+.topline {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  align-items: center;
+  color: var(--muted);
+  font-size: 13px;
+}
+.timer { color: var(--pink); font-weight: bold; font-size: 17px; }
+.track {
+  height: 6px;
+  background: #28304a;
+  border-radius: 9px;
+  margin: 15px 0 25px;
+  overflow: hidden;
+}
+#progress {
+  height: 100%;
+  width: 0;
+  background: linear-gradient(90deg, var(--purple), var(--blue));
+  transition: width .3s;
+}
+.tag {
+  color: var(--blue);
+  font-size: 11px;
+  letter-spacing: 2px;
+  font-weight: bold;
+}
+h2 { font-size: 24px; line-height: 1.4; }
+#question { min-height: 100px; }
+.answers { display: grid; gap: 10px; }
+.answer {
+  text-align: left;
+  padding: 15px;
+  border: 1px solid #303b5a;
+  border-radius: 12px;
+  background: #0b1121;
+  color: var(--text);
+  transition: .2s;
+}
+.answer:hover:not(:disabled) {
+  border-color: var(--purple);
+  transform: translateY(-1px);
+}
+.answer.selected {
+  border-color: var(--pink);
+  background: #301743;
+}
+.answer.correct {
+  border-color: #34d399;
+  background: #10372f;
+}
+.answer.wrong {
+  border-color: #fb7185;
+  background: #401a2b;
+}
+.actions {
+  display: flex;
+  gap: 10px;
+  margin-top: 20px;
+  flex-wrap: wrap;
+}
+.primary, .secondary {
+  border: 0;
+  border-radius: 11px;
+  padding: 13px 17px;
+  font-weight: bold;
+}
+.primary {
+  flex: 1;
+  color: white;
+  background: linear-gradient(100deg, #a855f7, #2563eb);
+}
+.secondary {
+  color: #e0d7ff;
+  background: #24203d;
+  border: 1px solid #504076;
+}
+button:disabled { opacity: .5; cursor: not-allowed; }
+#feedback {
+  color: var(--muted);
+  min-height: 48px;
+  line-height: 1.6;
+  margin: 17px 0 0;
+}
+.side h3 { margin-top: 0; }
+.side p { color: var(--muted); line-height: 1.7; font-size: 14px; }
+.mission {
+  padding: 15px;
+  border: 1px solid #35345b;
+  background: #15162d;
+  border-radius: 13px;
+  margin: 14px 0;
+}
+.mission strong { color: var(--pink); }
+.mini {
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.7;
+}
+footer {
+  text-align: center;
+  color: #7784a5;
+  padding: 25px 15px 40px;
+  font-size: 12px;
+}
+#endScreen { text-align: center; }
+.hidden { display: none !important; }
+@media(max-width:700px) {
+  .layout { grid-template-columns: 1fr; }
+  .side { display: grid; grid-template-columns: 1fr; }
+  main { margin-top: 25px; }
+  header { padding: 18px 5%; }
+  .panel { padding: 18px; }
+  .stat { padding: 12px 5px; }
+  .stat strong { font-size: 21px; }
+}
+</style>
+</head>
+<body>
+<header>
+  <div class="logo">⚡ NEON <span>HEIST</span></div>
+  <div class="pill">● OFFLINE PLAY READY</div>
+</header>
+
+<main>
+  <section class="hero">
+    <div class="eyebrow">THINK FAST. BREAK THE CODE.</div>
+    <h1>Enter the <span>Vault.</span></h1>
+    <p class="subtitle">15 missions. One hacker. Can you beat the system?</p>
+  </section>
+
+  <section class="stats">
+    <div class="stat"><strong id="credits">000</strong><span>CREDITS</span></div>
+    <div class="stat"><strong id="streak">0</strong><span>WIN STREAK</span></div>
+    <div class="stat"><strong id="best">0</strong><span>PERSONAL BEST</span></div>
+  </section>
+
+  <div class="layout">
+    <section class="panel">
+      <div id="gameScreen">
+        <div class="topline">
+          <span id="missionLabel">MISSION 01 / 15</span>
+          <span class="timer">◷ <span id="time">30</span>s</span>
+        </div>
+        <div class="track"><div id="progress"></div></div>
+        <div class="tag" id="category">LOGIC PROTOCOL</div>
+        <h2 id="question">Loading mission...</h2>
+        <div class="answers" id="answers"></div>
+        <div class="actions">
+          <button class="secondary" id="hintBtn">💡 Hint (−20)</button>
+          <button class="primary" id="submitBtn">Lock In Answer →</button>
+        </div>
+        <p id="feedback" aria-live="polite">Choose an answer to begin your mission.</p>
+      </div>
+
+      <div id="endScreen" class="hidden">
+        <div style="font-size:65px">🏆</div>
+        <div class="tag">MISSION REPORT</div>
+        <h2 id="endTitle">Vault Breached!</h2>
+        <p id="endText"></p>
+        <button class="primary" id="restartBtn">Run It Back ↻</button>
+      </div>
+    </section>
+
+    <aside class="panel side">
+      <h3>▣ Mission Briefing</h3>
+      <p>Crack each puzzle before the countdown reaches zero. Correct answers earn credits. Mistakes cost you time and momentum.</p>
+      <div class="mission">
+        <div class="mini">CURRENT OBJECTIVE</div>
+        <strong id="objective">Decode the signal</strong>
+        <p class="mini">Solve puzzles, build your streak, and finish all 15 missions.</p>
+      </div>
+      <h3>◈ Rules of the Game</h3>
+      <p>✦ Correct answer: +100 credits<br>
+      ✦ Fast answer: bonus credits<br>
+      ✦ Wrong answer: −5 seconds<br>
+      ✦ Hint: costs 20 credits<br>
+      ✦ Time limit: 30 seconds per mission</p>
+      <div class="mission">
+        <strong>PRO TIP</strong>
+        <p class="mini">Read carefully. The fastest answer isn't always the right one.</p>
+      </div>
+      <button class="secondary" id="skipBtn" style="width:100%">Skip Mission →</button>
+    </aside>
+  </div>
+</main>
+
+<footer>NEON HEIST // A LOGIC CHALLENGE FOR SHARP MINDS</footer>
+
+<script>
+const missions = [
+  {
+    cat:"NUMBER INTELLIGENCE", q:"What comes next? 3, 6, 12, 24, ...",
+    a:["36","42","48","54"], correct:2,
+    hint:"Each number is multiplied by the same value.",
+    why:"Each number doubles. 24 × 2 = 48."
+  },
+  {
+    cat:"QUICK MATH", q:"A product costs ₹800 after a 20% discount. What was its original price?",
+    a:["₹960","₹1,000","₹1,020","₹1,200"], correct:1,
+    hint:"₹800 represents 80% of the original price.",
+    why:"800 ÷ 0.8 = ₹1,000."
+  },
+  {
+    cat:"LOGIC PROTOCOL", q:"All Zorbs are blue. Some blue things are expensive. Which statement must be true?",
+    a:["All Zorbs are expensive","Some Zorbs are expensive","All Zorbs are blue","No blue things are Zorbs"], correct:2,
+    hint:"Only one statement repeats information guaranteed by the first sentence.",
+    why:"The first sentence guarantees that every Zorb is blue. It says nothing definite about their price."
+  },
+  {
+    cat:"PATTERN RECOGNITION", q:"Which number doesn't belong? 16, 25, 36, 49, 63",
+    a:["16","36","49","63"], correct:3,
+    hint:"Four numbers are perfect squares.",
+    why:"16, 25, 36 and 49 are squares. 63 is not."
+  },
+  {
+    cat:"DIGITAL SECURITY", q:"Which password is generally the strongest?",
+    a:["password123","Ravi2004","12345678","vQ7!mP2#zL9"], correct:3,
+    hint:"Length, unpredictability and variety help make passwords stronger.",
+    why:"The long, unpredictable password is strongest among these choices. Use unique passwords and a password manager."
+  },
+  {
+    cat:"QUICK MATH", q:"What is 15% of 240?",
+    a:["24","30","36","42"], correct:2,
+    hint:"10% is 24; 5% is half of that.",
+    why:"24 + 12 = 36."
+  },
+  {
+    cat:"LATERAL THINKING", q:"A farmer has 17 sheep. All but 9 run away. How many remain?",
+    a:["8","9","17","0"], correct:1,
+    hint:"Pay attention to the phrase 'all but 9'.",
+    why:"All except 9 ran away, so 9 remain."
+  },
+  {
+    cat:"NUMBER INTELLIGENCE", q:"If 5 machines make 5 items in 5 minutes, how long do 100 machines take to make 100 items?",
+    a:["5 minutes","20 minutes","100 minutes","500 minutes"], correct:0,
+    hint:"Each machine makes one item in five minutes.",
+    why:"All 100 machines work simultaneously, producing 100 items in 5 minutes."
+  },
+  {
+    cat:"WORD LOGIC", q:"Rearrange LISTEN to make a word with the same letters.",
+    a:["SILENT","LITTLE","LIVING","LINES"], correct:0,
+    hint:"The answer means making no sound.",
+    why:"LISTEN and SILENT use exactly the same six letters."
+  },
+  {
+    cat:"BUSINESS BRAIN", q:"Revenue is ₹50,000 and total costs are ₹38,000. What is the profit?",
+    a:["₹8,000","₹12,000","₹18,000","₹88,000"], correct:1,
+    hint:"Profit = Revenue − Total costs.",
+    why:"₹50,000 − ₹38,000 = ₹12,000."
+  },
+  {
+    cat:"PATTERN RECOGNITION", q:"What comes next? 1, 1, 2, 3, 5, 8, ...",
+    a:["11","12","13","15"], correct:2,
+    hint:"Add the previous two numbers.",
+    why:"5 + 8 = 13. This is the Fibonacci sequence."
+  },
+  {
+    cat:"QUICK MATH", q:"A car travels 150 km in 3 hours. What is its average speed?",
+    a:["30 km/h","45 km/h","50 km/h","60 km/h"], correct:2,
+    hint:"Speed = Distance ÷ Time.",
+    why:"150 ÷ 3 = 50 km/h."
+  },
+  {
+    cat:"LOGIC PROTOCOL", q:"You overtake the person in second place in a race. What place are you in now?",
+    a:["First","Second","Third","Last"], correct:1,
+    hint:"You take the position of the person you passed.",
+    why:"You are now second, not first."
+  },
+  {
+    cat:"DATA DETECTIVE", q:"A fair six-sided die is rolled. What is the probability of rolling an even number?",
+    a:["1/6","1/3","1/2","2/3"], correct:2,
+    hint:"Three of the six faces are even.",
+    why:"The even outcomes are 2, 4 and 6. Probability = 3/6 = 1/2."
+  },
+  {
+    cat:"FINAL FIREWALL", q:"A number is doubled, then 10 is added. The result is 34. What was the original number?",
+    a:["10","12","14","17"], correct:1,
+    hint:"Reverse the steps: subtract 10, then divide by 2.",
+    why:"(34 − 10) ÷ 2 = 12. Vault breached!"
+  }
+];
+
+let index = 0, credits = 0, streak = 0;
+let seconds = 30, timer = null;
+let selected = null, locked = false, hintUsed = false;
+let finished = false, answered = new Set();
+let best = 0;
+
+try { best = Number(localStorage.getItem("neonHeistBest")) || 0; }
+catch(e) {}
+
+const $ = id => document.getElementById(id);
+const shuffle = arr => arr.map(x => [Math.random(),x])
+  .sort((a,b) => a[0]-b[0]).map(x => x[1]);
+
+function updateStats() {
+  $("credits").textContent = credits;
+  $("streak").textContent = streak;
+  $("best").textContent = best;
+}
+
+function startTimer() {
+  clearInterval(timer);
+  seconds = 30;
+  $("time").textContent = seconds;
+  timer = setInterval(() => {
+    if (locked || finished) return;
+    seconds--;
+    $("time").textContent = seconds;
+    if (seconds <= 0) {
+      clearInterval(timer);
+      finishAnswer(-1, true);
+    }
+  }, 1000);
+}
+
+function loadMission() {
+  if (index >= missions.length) return endGame();
+
+  locked = false;
+  selected = null;
+  hintUsed = false;
+
+  const m = missions[index];
+  $("missionLabel").textContent =
+    `MISSION ${String(index+1).padStart(2,"0")} / ${missions.length}`;
+  $("progress").style.width = `${index/missions.length*100}%`;
+  $("category").textContent = m.cat;
+  $("question").textContent = m.q;
+  $("objective").textContent = index === 14 ? "Break the final firewall" : "Decode the signal";
+  $("feedback").textContent = "Choose your answer, then lock it in.";
+  $("submitBtn").disabled = false;
+  $("hintBtn").disabled = false;
+  $("skipBtn").disabled = false;
+
+  const answers = m.a.map((text,i) => ({text, correct:i===m.correct}));
+  shuffle(answers).forEach((item,i) => {
+    const btn = document.createElement("button");
+    btn.className = "answer";
+    btn.textContent = `${String.fromCharCode(65+i)}. ${item.text}`;
+    btn.dataset.correct = item.correct;
+    btn.addEventListener("click", () => {
+      if (locked) return;
+      selected = item.correct;
+      document.querySelectorAll(".answer").forEach(b =>
+        b.classList.toggle("selected", b===btn));
+    });
+    $("answers").appendChild(btn);
+  });
+
+  updateStats();
+  startTimer();
+}
+
+function finishAnswer(isCorrect, timeout=false) {
+  if (locked) return;
+  locked = true;
+  clearInterval(timer);
+
+  const m = missions[index];
+  answered.add(index);
+  $("submitBtn").disabled = true;
+  $("hintBtn").disabled = true;
+  $("skipBtn").disabled = true;
+
+  document.querySelectorAll(".answer").forEach(btn => {
+    btn.disabled = true;
+    if (btn.dataset.correct === "true") btn.classList.add("correct");
+    else if (btn.classList.contains("selected")) btn.classList.add("wrong");
+  });
+
+  if (isCorrect === true) {
+    const earned = 100 + seconds * 5;
+    credits += earned;
+    streak++;
+    $("feedback").textContent = `✓ Access granted! +${earned} credits. ${m.why}`;
+  } else {
+    streak = 0;
+    $("feedback").textContent = timeout
+      ? `⌛ Time's up! ${m.why}`
+      : isCorrect === false
+        ? `✕ Access denied. ${m.why}`
+        : `Mission skipped. ${m.why}`;
+  }
+
+  updateStats();
+  $("progress").style.width = `${(index+1)/missions.length*100}%`;
+
+  setTimeout(() => {
+    index++;
+    loadMission();
+  }, 2200);
+}
+
+$("submitBtn").addEventListener("click", () => {
+  if (locked) return;
+  if (selected === null) {
+    $("feedback").textContent = "Select an answer before locking it in.";
+    return;
+  }
+  finishAnswer(selected);
+});
+
+$("hintBtn").addEventListener("click", () => {
+  if (locked || hintUsed) return;
+  hintUsed = true;
+  credits = Math.max(0, credits - 20);
+  $("feedback").textContent = "💡 " + missions[index].hint;
+  $("hintBtn").disabled = true;
+  updateStats();
+});
+
+$("skipBtn").addEventListener("click", () => {
+  if (!locked) finishAnswer(null);
+});
+
+function endGame() {
+  finished = true;
+  clearInterval(timer);
+  $("gameScreen").classList.add("hidden");
+  $("endScreen").classList.remove("hidden");
+  $("progress").style.width = "100%";
+
+  if (credits > best) {
+    best = credits;
+    try { localStorage.setItem("neonHeistBest", String(best)); }
+    catch(e) {}
+  }
+  updateStats();
+
+  const rate = Math.round(answered.size / missions.length * 100);
+  $("endTitle").textContent = credits >= 1000 ? "Vault Breached!" : "Heist Complete!";
+  $("endText").textContent =
+    `You earned ${credits} credits and completed ${answered.size} of 15 missions. ` +
+    `Completion: ${rate}%. Your personal best is ${best} credits.`;
+}
+
+function restartGame() {
+  index = 0;
+  credits = 0;
+  streak = 0;
+  finished = false;
+  answered = new Set();
+  $("gameScreen").classList.remove("hidden");
+  $("endScreen").classList.add("hidden");
+  loadMission();
+}
+
+$("restartBtn").addEventListener("click", restartGame);
+
+updateStats();
+loadMission();
+</script>
+</body>
+</html>
